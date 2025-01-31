@@ -27,6 +27,7 @@ def safely(
         return safe_func
     return decorator
 
+@safely(message = "There was an issue with filtering none values")
 def filter_nones(
     filterer: Sequence,
     to_filter: list[Sequence]

@@ -213,7 +213,10 @@ def process_corpus(
     all_candidates = []
     for intervals in all_intervals:
         sound_parts = get_sound_parts(intervals, window_length)
-        sound_parts, intervals = filter_nones(sound_parts, [sound_parts, intervals])
+        result = filter_nones(sound_parts, [sound_parts, intervals])
+        if result is None:
+            continue
+        sound_parts, intervals = result
 
         arg_list = [
             {
