@@ -113,7 +113,6 @@ class Track:
             if np.median(smoothed_formants[3] - smoothed_formants[2]) < self.heuristic_values["proxF3F4"][0]:
                 if np.median(smoothed_formants[1] - smoothed_formants[0]) < self.heuristic_values["proxF3F4"][1]:
                     error += 10000
-        print(error)
         return error
         
     @property
