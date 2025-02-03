@@ -82,7 +82,23 @@ def process_audio_file(
         pre_emphasis_from: float = 50,
         smoother: Smoother = Smoother(),
         loss_fun: Loss = Loss(),
-        agg_fun: Agg = Agg()
+        agg_fun: Agg = Agg(),
+        heuristics: dict = {
+            "max_freq": False,
+            "min_freq": False,
+            "max_bw": False,
+            "min_bw": False,
+            "rhotic": False,
+            "proxF3F4": False
+        },
+        heuristic_values: dict = {
+            "max_freq": {1: 1200}, # median F1 frequency should not be higher than 1200 Hz
+            "min_freq": {},
+            "max_bw": {2: 500, 3: 600, 4: 900}, # median bandwidths should not be higher than values
+            "min_bw": {},
+            "rhotic": [2000, 500], # if F3<2000Hz, F1&F2 should be at least 500Hz apart
+            "proxF3F4": [500, 1500] # if F4-F3<500Hz, F1&F2 should be at least 1500Hz apart
+        }
 )->CandidateTracks:
     """Given the path to a single audio file, return a candidates track object.
 
@@ -110,6 +126,23 @@ def process_audio_file(
             Defaults to Loss().
         agg_fun (Agg, optional): The loss aggregation function to use. 
             Defaults to Agg().
+        heuristics (dict, optional): A dictionary specifying which heuristics to include.
+            Expected keys:
+            - `"max_freq"` (bool)
+            - `"min_freq"` (bool)
+            - `"max_bw"` (bool)
+            - `"min_bw"` (bool)
+            - `"rhotic"` (bool)
+            - `"proxF3F4"` (bool)
+            Defaults to False for all.
+        heuristic_values (dict, optional): A dictionary specifying values for included heuristics.
+            Expected keys:
+            - `"max_freq"` (dict): formant numbers (1, 2, etc.) as keys, frequencies (1200, etc.) as values.
+            - `"min_freq"` (dict): formant numbers as keys, frequencies as values.
+            - `"max_bw"` (dict): formant numbers as keys, bandwidths (500, etc.) as values.
+            - `"min_bw"` (dict): formant numbers as keys, bandwidths as values.
+            - `"rhotic"` (list): 2-value list. If F3 is less than the first value then the second value is the min distance between F1 and F2.
+            - `"proxF3F4"` (list): 2-value list. If the F4-F3 is less than the first value then the second values is the min distance between F1 and F2.
 
     Returns:
         (CandidateTracks): A `CandidateTracks` object to use.
@@ -171,7 +204,23 @@ def process_directory(
         pre_emphasis_from: float = 50,
         smoother: Smoother = Smoother(),
         loss_fun: Loss = Loss(),
-        agg_fun: Agg = Agg()
+        agg_fun: Agg = Agg(),
+        heuristics: dict = {
+            "max_freq": False,
+            "min_freq": False,
+            "max_bw": False,
+            "min_bw": False,
+            "rhotic": False,
+            "proxF3F4": False
+        },
+        heuristic_values: dict = {
+            "max_freq": {1: 1200}, # median F1 frequency should not be higher than 1200 Hz
+            "min_freq": {},
+            "max_bw": {2: 500, 3: 600, 4: 900}, # median bandwidths should not be higher than values
+            "min_bw": {},
+            "rhotic": [2000, 500], # if F3<2000Hz, F1&F2 should be at least 500Hz apart
+            "proxF3F4": [500, 1500] # if F4-F3<500Hz, F1&F2 should be at least 1500Hz apart
+        }
 )->list[CandidateTracks]:
     """Given a path to a directoy of audio files, process them all.
 
@@ -196,6 +245,23 @@ def process_directory(
             Defaults to Loss().
         agg_fun (Agg, optional): The loss aggregation function to use. 
             Defaults to Agg().
+        heuristics (dict, optional): A dictionary specifying which heuristics to include.
+            Expected keys:
+            - `"max_freq"` (bool)
+            - `"min_freq"` (bool)
+            - `"max_bw"` (bool)
+            - `"min_bw"` (bool)
+            - `"rhotic"` (bool)
+            - `"proxF3F4"` (bool)
+            Defaults to False for all.
+        heuristic_values (dict, optional): A dictionary specifying values for included heuristics.
+            Expected keys:
+            - `"max_freq"` (dict): formant numbers (1, 2, etc.) as keys, frequencies (1200, etc.) as values.
+            - `"min_freq"` (dict): formant numbers as keys, frequencies as values.
+            - `"max_bw"` (dict): formant numbers as keys, bandwidths (500, etc.) as values.
+            - `"min_bw"` (dict): formant numbers as keys, bandwidths as values.
+            - `"rhotic"` (list): 2-value list. If F3 is less than the first value then the second value is the min distance between F1 and F2.
+            - `"proxF3F4"` (list): 2-value list. If the F4-F3 is less than the first value then the second values is the min distance between F1 and F2.
 
     Returns:
         (list[CandidateTracks]): A list of `CandidateTracks` objects.
@@ -217,7 +283,9 @@ def process_directory(
             "pre_emphasis_from":pre_emphasis_from,
             "smoother":smoother,
             "loss_fun":loss_fun,
-            "agg_fun":agg_fun
+            "agg_fun":agg_fun,
+            "heuristics": heuristics,
+            "heuristic_values": heuristic_values
             }
             for x in all_audio
     ]

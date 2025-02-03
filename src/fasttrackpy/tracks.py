@@ -58,7 +58,9 @@ class Track:
                 "min_bw": {},
                 "rhotic": [2000, 500], # if F3<2000Hz, F1&F2 should be at least 500Hz apart
                 "proxF3F4": [500, 1500] # if F4-F3<500Hz, F1&F2 should be at least 1500Hz apart
-            }
+            },
+            label_heuristics: str = None,
+            label: str = None
     ):
         #self.sound = sound
         if sound:
@@ -78,6 +80,8 @@ class Track:
         self.agg_fun = agg_fun
         self.heuristics = heuristics
         self.heuristic_values = heuristic_values
+        self.label_heuristics = label_heuristics
+        self.label = label
 
     def get_smooth_error(self, smoothed_formants, smoothed_bandwidths):
         """Calculates the smooth error with heuristic penalties."""
@@ -177,7 +181,12 @@ class OneTrack(Track):
             - `"min_bw"` (dict): formant numbers as keys, bandwidths as values.
             - `"rhotic"` (list): 2-value list. If F3 is less than the first value then the second value is the min distance between F1 and F2.
             - `"proxF3F4"` (list): 2-value list. If the F4-F3 is less than the first value then the second values is the min distance between F1 and F2.
-
+        label_heuristics (str, optional): A str specifying which phoneme heuristics should be included if any.
+            Defaults to None.
+            Options:
+            - `"Adult"` (str): penalizes formant tracks with measurements outside the normal adult range.
+            - `"Child_{Age}"` (str): penalizes formant tracks with measurements outside the normal child range with the specified age.
+        label (str, optional): The label of the interval, if specified.
              
 
     Attributes:
@@ -225,7 +234,9 @@ class OneTrack(Track):
                 "min_bw": {},
                 "rhotic": [2000, 500], # if F3<2000Hz, F1&F2 should be at least 500Hz apart
                 "proxF3F4": [500, 1500] # if F4-F3<500Hz, F1&F2 should be at least 1500Hz apart
-            }
+            },
+            label_heuristics: str = None,
+            label: str = None
         ):
         super().__init__(
             sound=sound,
@@ -240,7 +251,9 @@ class OneTrack(Track):
             loss_fun=loss_fun,
             agg_fun=agg_fun,
             heuristics=heuristics,
-            heuristic_values=heuristic_values
+            heuristic_values=heuristic_values,
+            label_heuristics=label_heuristics,
+            label=label
         )
         self.maximum_formant = maximum_formant
 
@@ -578,7 +591,9 @@ class CandidateTracks(Track, Sequence):
             "min_bw": {},
             "rhotic": [2000, 500], # if F3<2000Hz, F1&F2 should be at least 500Hz apart
             "proxF3F4": [500, 1500] # if F4-F3<500Hz, F1&F2 should be at least 1500Hz apart
-        }
+        },
+        label_heuristics: str = None,
+        label: str = None
     ):
         super().__init__(
             sound=sound,
@@ -593,7 +608,9 @@ class CandidateTracks(Track, Sequence):
             loss_fun=loss_fun,
             agg_fun=agg_fun,
             heuristics=heuristics,
-            heuristic_values=heuristic_values
+            heuristic_values=heuristic_values,
+            label_heuristics=label_heuristics,
+            label=label
         )
 
         self.min_max_formant = min_max_formant
@@ -627,7 +644,9 @@ class CandidateTracks(Track, Sequence):
                 "loss_fun": self.loss_fun,
                 "agg_fun": self.agg_fun,
                 "heuristics": self.heuristics,
-                "heuristic_values": self.heuristic_values 
+                "heuristic_values": self.heuristic_values,
+                "label_heuristics": self.label_heuristics,
+                "label": self.label
             }
             for max_formant in self.max_formants
         ]
